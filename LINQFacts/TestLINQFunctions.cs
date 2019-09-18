@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Xunit;
 
 namespace LINQ
@@ -10,16 +11,20 @@ namespace LINQ
         {
             var employees = Employee.GetEmployees();
 
-            Func<Employee, Employee> myFunc = (x) => x.FirstName.StartsWith('P') ? x : null;
-
-
+            Func<Employee, bool> myFunc = (x) => x.FirstName.StartsWith('P');
             var selectedEmployees = LINQFunctions.Select(employees, p => myFunc(p));
 
-            foreach (var current in selectedEmployees)
+            int counter = 0;
+
+            foreach(var current in selectedEmployees)
             {
-                Assert.True(current.FirstName.StartsWith('P'));
+                if (current)
+                {
+                    counter++;
+                }
             }
 
+            Assert.Equal(2, counter);
         }
 
         [Fact]
