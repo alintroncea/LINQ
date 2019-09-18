@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -25,6 +26,28 @@ namespace LINQ
             }
 
             Assert.Equal(2, counter);
+        }
+
+        [Fact]
+        public void TestSelectMany()
+        {
+            var employees = Employee.GetEmployees();
+
+            Func<Employee, List<Department>> myFunc = (x) => x.Departments;
+            var selectedEmployees = LINQFunctions.SelectMany(employees, p => myFunc(p));
+
+            Assert.Equal(12,selectedEmployees.Count());
+        }
+
+        [Fact]
+        public void TestWhere()
+        {
+            var employees = Employee.GetEmployees();
+            Func<Employee, bool> myFunc = (x) => x.FirstName.StartsWith('P');
+
+            var selectedEmployees = LINQFunctions.Where(employees, p => myFunc(p));
+
+            Assert.Equal(2, selectedEmployees.Count());
         }
 
         [Fact]

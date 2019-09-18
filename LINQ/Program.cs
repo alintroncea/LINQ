@@ -10,14 +10,13 @@ namespace LINQ
        static void Main(string[] args)
         {
             var employees = Employee.GetEmployees();
-
             Func<Employee, bool> myFunc = (x) => x.FirstName.StartsWith('P');
 
-            var selectedEmployees = LINQFunctions.Select(employees, p => myFunc(p));
+            var selectedEmployees = LINQFunctions.Where(employees, p=>myFunc(p));
 
             foreach(var current in selectedEmployees)
             {
-                Console.WriteLine(current);
+                Console.WriteLine(current.FirstName);
             }
 
         }

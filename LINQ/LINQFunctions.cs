@@ -13,47 +13,68 @@ namespace LINQ
             {
                 yield return selector(current);
             }
-
-        }   
-
-    public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
-    {
-        foreach (var element in source)
+        }
+        public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (!predicate(element))
+            foreach(var current in source)
             {
-                return false;
+                if (predicate(current))
+                {
+                    yield return current;
+                }
             }
         }
 
-        return true;
-    }
-
-    public static bool Any<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
-    {
-        foreach (var element in source)
+        public static IEnumerable<TResult> SelectMany<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
         {
-            if (predicate(element))
+            foreach (var current in source)
             {
-                return true;
+                var result = selector(current);
+
+                foreach(var child in result)
+                {
+                    yield return child;
+                }
             }
         }
 
-        return false;
-    }
-
-    public static TSource First<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
-    {
-        foreach (var element in source)
+        public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (predicate(element))
+            foreach (var element in source)
             {
-                return element;
+                if (!predicate(element))
+                {
+                    return false;
+                }
             }
+
+            return true;
         }
 
-        throw new InvalidOperationException("No element has been found");
-    }
+        public static bool Any<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            foreach (var element in source)
+            {
+                if (predicate(element))
+                {
+                    return true;
+                }
+            }
 
-}
+            return false;
+        }
+
+        public static TSource First<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            foreach (var element in source)
+            {
+                if (predicate(element))
+                {
+                    return element;
+                }
+            }
+
+            throw new InvalidOperationException("No element has been found");
+        }
+    }
 }
