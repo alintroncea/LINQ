@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,8 +10,7 @@ namespace LINQ
     {
         static void Main(string[] args)
         {
-
+           
         }
-
     }
 }

@@ -8,6 +8,255 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
+        public void TestExcept()
+        {
+            string[] firstArray = { "Andreea", "Maria", "Ioana" };
+            string[] secondArray = { "Andreea", "Maria", "Andrei", "Ionut" };
+
+
+            var exceptComparer = new Comparer<string>();
+            var result = LINQFunctions.Except(firstArray, secondArray, exceptComparer);
+
+            Assert.Equal(1, result.Count());
+        }
+        [Fact]
+        public void TestExceptWhenThrowingExceptions()
+        {
+            string[] firstArray = { "Andreea", "Maria", "Ioana" };
+            string[] secondArray = null;
+
+            var result = LINQFunctions.Except(firstArray, secondArray, new Comparer<string>());
+            Assert.Throws<ArgumentNullException>(() => result.Count());
+        }
+        [Fact]
+        public void TestIntersect()
+        {
+            List<Employee> oldEmployees = new List<Employee>
+            {
+                new Employee {ID = 104,
+                    FirstName = "Ionut",
+                    LastName = "Popescu",
+                    Salary = 90000,
+                    Departments = { new Department { Name = "Marketing" }, new Department {Name = "Sales" } } },
+
+                new Employee {ID = 105,
+                    FirstName = "Andreea",
+                    LastName = "Popescu",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+                new Employee { ID = 106,
+                    FirstName = "Mihai",
+                    LastName = "Andreescu",
+                    Salary = 160000,
+                    Departments = { new Department { Name = "Production" }, new Department {Name = "Sales" } } }
+                };
+
+            List<Employee> newEmployees = new List<Employee>
+            {
+                new Employee {ID = 104,
+                    FirstName = "George",
+                    LastName = "Petrescu",
+                    Salary = 90000,
+                    Departments = { new Department { Name = "Marketing" }, new Department {Name = "Sales" } } },
+
+                new Employee {ID = 105,
+                    FirstName = "Ionut",
+                    LastName = "Ghita",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+                new Employee { ID = 106,
+                    FirstName = "Ioana",
+                    LastName = "Mihaescu",
+                    Salary = 160000,
+                    Departments = { new Department { Name = "Production" }, new Department {Name = "Sales" } } }
+                };
+
+            var intersectComparer = new IntersectComparer();
+            var result = LINQFunctions.Intersect(oldEmployees, newEmployees, intersectComparer);
+
+            Assert.Equal(1, result.Count());
+        }
+        [Fact]
+        public void TestIntersectWhenThrowingExceptions()
+        {
+            List<Employee> oldEmployees = null;
+
+            List<Employee> newEmployees = new List<Employee>
+            {
+                new Employee {ID = 104,
+                    FirstName = "George",
+                    LastName = "Petrescu",
+                    Salary = 90000,
+                    Departments = { new Department { Name = "Marketing" }, new Department {Name = "Sales" } } },
+
+                new Employee {ID = 105,
+                    FirstName = "Ionut",
+                    LastName = "Ghita",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+                new Employee { ID = 106,
+                    FirstName = "Ioana",
+                    LastName = "Mihaescu",
+                    Salary = 160000,
+                    Departments = { new Department { Name = "Production" }, new Department {Name = "Sales" } } }
+                };
+
+
+            var result = LINQFunctions.Intersect(oldEmployees, newEmployees, new IntersectComparer());
+            Assert.Throws<ArgumentNullException>(() => result.Count());
+        }
+        [Fact]
+        public void TestUnion()
+        {
+            string[] oldEmployees = { "Andreea", "Maria", "Ioana" };
+            string[] newEmployees = { "Andreea", "George", "Andrei", "Ionut" };
+
+            var unionComparer = new Comparer<string>();
+            var result = LINQFunctions.Union(oldEmployees, newEmployees, unionComparer);
+
+            int counter = 0;
+
+            foreach (var current in result)
+            {
+                if (current.Equals("Andreea"))
+                {
+                    counter++;
+                }
+            }
+
+            Assert.Equal(1, counter);
+            Assert.Equal(6, result.Count());
+        }
+        [Fact]
+        public void TestUnionWhenThrowingExceptions()
+        {
+            string[] oldEmployees = null;
+            string[] newEmployees = { "Andreea", "George", "Andrei", "Ionut" };
+
+            var unionComparer = new Comparer<string>();
+            Assert.Throws<ArgumentNullException>(() => LINQFunctions.Union(oldEmployees, newEmployees, unionComparer));
+        }
+        [Fact]
+        public void TestDistinct()
+        {
+            string[] employeesNames = { "Mara", "Mara", "Ana", "Andreea" };
+            var distinctEqualityComparer = new Comparer<string>();
+
+
+            var result = LINQFunctions.Distinct(employeesNames, distinctEqualityComparer);
+
+            Assert.Equal(3, result.Count());
+        }
+        [Fact]
+        public void TestDistinctWhenThrowingExceptions()
+        {
+            string[] employeesNames = null;
+            var distinctEqualityComparer = new Comparer<string>();
+
+            Assert.Throws<ArgumentNullException>(() => LINQFunctions.Distinct(employeesNames, distinctEqualityComparer));
+        }
+        [Fact]
+        public void TestJoin()
+        {
+            var employees = new List<Employee>
+           {
+                new Employee {ID = 1,
+                    FirstName = "Mihai",
+                    LastName = "Popescu",
+                    Salary = 90000 },
+
+                new Employee {ID = 2,
+                    FirstName = "Andreea",
+                    LastName = "Calinescu",
+                    Salary = 100000},
+
+                new Employee {ID = 3,
+                    FirstName = "George",
+                    LastName = "Petrescu",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+           };
+
+            var departmentList = new List<Department>
+           {
+               new Department{ DepartmentID = 1, Name ="HR"},
+               new Department{DepartmentID = 2, Name ="Marketing"},
+               new Department{DepartmentID = 4, Name ="Sales"}
+           };
+
+            Func<Employee, int> outerFunc = (employee) => employee.ID;
+            Func<Department, int> innerFunc = (department) => department.DepartmentID;
+            Func<Employee, Department, KeyValuePair<string, string>> selector = (employee, department) =>
+            {
+                {
+                    return new KeyValuePair<string, string>(employee.FirstName, department.Name);
+                }
+            };
+
+            var result = LINQFunctions.Join(employees, departmentList,
+                                        employee => outerFunc(employee), department => innerFunc(department),
+                                        (employee, department) =>
+                                        selector(employee, department));
+
+            var kvp1 = new KeyValuePair<string, string>("Mihai", "HR");
+            var kvp2 = new KeyValuePair<string, string>("George", "Sales");
+
+            Assert.True(result.Contains(kvp1));
+            Assert.False(result.Contains(kvp2));
+        }
+        [Fact]
+        public void TestJoinWhenThrowingExeptions()
+        {
+            List<Employee> employees = null;
+            var departmentList = new List<Department>
+           {
+               new Department{ DepartmentID = 1, Name ="HR"},
+               new Department{DepartmentID = 2, Name ="Marketing"},
+               new Department{DepartmentID = 4, Name ="Sales"}
+           };
+
+            Func<Employee, int> outerFunc = (employee) => employee.ID;
+            Func<Department, int> innerFunc = (department) => department.DepartmentID;
+
+            Func<Employee, Department, KeyValuePair<string, string>> selector = (employee, department) =>
+            {
+                {
+                    return new KeyValuePair<string, string>(employee.FirstName, department.Name);
+                }
+            };
+            
+            var result = LINQFunctions.Join(employees, departmentList,
+                                        employee => outerFunc(employee), department => innerFunc(department),
+                                        (employee, department) =>
+                                        selector(employee, department));
+
+            Assert.Throws<ArgumentNullException>(() => result.Count());
+        }
+        [Fact]
+        public void TestAggregate()
+        {
+            int[] array = { 1, 2, 4, 5 };
+
+            Func<int, int, int> myFunc = (x, z) => x * z;
+
+            var result = LINQFunctions.Aggregate(array, 5, (a, b) => myFunc(a, b));
+
+            Assert.Equal(200, result);
+        }
+        [Fact]
+        public void TestAggregateWhenThrowingExceptions()
+        {
+            int[] array = null;
+            Func<int, int, int> myFunc = (x, z) => x * z;
+
+            Assert.Throws<ArgumentNullException>(() => LINQFunctions.Aggregate(array, 5, (a, b) => myFunc(a, b)));
+        }
+
+        [Fact]
         public void TestZip()
         {
             int[] numbers = { 1, 2, 3, 4 };
