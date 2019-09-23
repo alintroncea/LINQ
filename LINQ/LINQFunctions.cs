@@ -8,7 +8,37 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
-       
+        public static TAccumulate Aggregate<TSource, TAccumulate>(
+                                            this IEnumerable<TSource> source,
+                                            TAccumulate seed,
+                                            Func<TAccumulate, TSource, TAccumulate> func)
+        {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (seed == null)
+            {
+                throw new ArgumentNullException(nameof(seed));
+            }
+
+
+            if (func is null)
+            {
+                throw new ArgumentNullException(nameof(func));
+            }
+
+            TAccumulate result = seed;
+
+            foreach (var element in source)
+            {
+                result = func(result, element);
+            }
+
+            return result;
+        }
+
         public static IEnumerable<TResult> Zip<TFirst, TSecond, TResult>(
                                                this IEnumerable<TFirst> first,
                                                IEnumerable<TSecond> second,

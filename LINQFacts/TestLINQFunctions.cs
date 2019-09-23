@@ -7,7 +7,25 @@ namespace LINQ
 {
     public class TestLINQFunctions
     {
-       
+        [Fact]
+        public void TestAggregate()
+        {
+            int[] array = { 1, 2, 4, 5 };
+
+            Func<int, int, int> myFunc = (x, z) => x * z;
+
+            var result = LINQFunctions.Aggregate(array, 5, (a, b) => myFunc(a, b));
+
+            Assert.Equal(200, result);
+        }
+        [Fact]
+        public void TestAggregateWhenThrowingExceptions()
+        {
+            int[] array = null;
+            Func<int, int, int> myFunc = (x, z) => x * z;
+
+            Assert.Throws<ArgumentNullException>(() => LINQFunctions.Aggregate(array, 5, (a, b) => myFunc(a, b)));
+        }
         [Fact]
         public void TestZip()
         {
