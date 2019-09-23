@@ -8,6 +8,57 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
+        public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
+                                               this IEnumerable<TOuter> outer,
+                                               IEnumerable<TInner> inner,
+                                               Func<TOuter, TKey> outerKeySelector,
+                                               Func<TInner, TKey> innerKeySelector,
+                                               Func<TOuter, TInner, TResult> resultSelector)
+        {
+            if (outer is null)
+            {
+                throw new ArgumentNullException(nameof(outer));
+            }
+
+            if (inner is null)
+            {
+                throw new ArgumentNullException(nameof(inner));
+            }
+
+            if (outerKeySelector is null)
+            {
+                throw new ArgumentNullException(nameof(outerKeySelector));
+            }
+
+            if (innerKeySelector is null)
+            {
+                throw new ArgumentNullException(nameof(innerKeySelector));
+            }
+
+            if (resultSelector is null)
+            {
+                throw new ArgumentNullException(nameof(resultSelector));
+            }
+
+            var shortestLength = Math.Min(outer.Count(), inner.Count());
+
+            IEnumerator<TOuter> outerEnumerator = outer.GetEnumerator();
+            IEnumerator<TInner> innerEnumerator = inner.GetEnumerator();
+
+            for (int i = 0; i < shortestLength; i++)
+            {
+                while (outerEnumerator.MoveNext() && innerEnumerator.MoveNext())
+                {
+                    var firstKey = outerKeySelector(outerEnumerator.Current);
+                    var secondKey = innerKeySelector(innerEnumerator.Current);
+
+                    if (firstKey.Equals(secondKey))
+                    {
+                        yield return resultSelector(outerEnumerator.Current, innerEnumerator.Current);
+                    }
+                }
+            }
+        }
         public static TAccumulate Aggregate<TSource, TAccumulate>(
                                             this IEnumerable<TSource> source,
                                             TAccumulate seed,

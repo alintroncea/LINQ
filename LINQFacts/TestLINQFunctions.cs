@@ -8,6 +8,84 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
+        public void TestJoin()
+        {
+            var employees = new List<Employee>
+           {
+                new Employee {ID = 1,
+                    FirstName = "Mihai",
+                    LastName = "Popescu",
+                    Salary = 90000 },
+
+                new Employee {ID = 2,
+                    FirstName = "Andreea",
+                    LastName = "Calinescu",
+                    Salary = 100000},
+
+                new Employee {ID = 3,
+                    FirstName = "George",
+                    LastName = "Petrescu",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+           };
+
+            var departmentList = new List<Department>
+           {
+               new Department{ DepartmentID = 1, Name ="HR"},
+               new Department{DepartmentID = 2, Name ="Marketing"},
+               new Department{DepartmentID = 4, Name ="Sales"}
+           };
+
+            Func<Employee, int> outerFunc = (employee) => employee.ID;
+            Func<Department, int> innerFunc = (department) => department.DepartmentID;
+            Func<Employee, Department, KeyValuePair<string, string>> selector = (employee, department) =>
+            {
+                {
+                    return new KeyValuePair<string, string>(employee.FirstName, department.Name);
+                }
+            };
+
+            var result = LINQFunctions.Join(employees, departmentList,
+                                        employee => outerFunc(employee), department => innerFunc(department),
+                                        (employee, department) =>
+                                        selector(employee, department));
+
+            var kvp1 = new KeyValuePair<string, string>("Mihai", "HR");
+            var kvp2 = new KeyValuePair<string, string>("George", "Sales");
+
+            Assert.True(result.Contains(kvp1));
+            Assert.False(result.Contains(kvp2));
+        }
+        [Fact]
+        public void TestJoinWhenThrowingExeptions()
+        {
+            List<Employee> employees = null;
+            var departmentList = new List<Department>
+           {
+               new Department{ DepartmentID = 1, Name ="HR"},
+               new Department{DepartmentID = 2, Name ="Marketing"},
+               new Department{DepartmentID = 4, Name ="Sales"}
+           };
+
+            Func<Employee, int> outerFunc = (employee) => employee.ID;
+            Func<Department, int> innerFunc = (department) => department.DepartmentID;
+
+            Func<Employee, Department, KeyValuePair<string, string>> selector = (employee, department) =>
+            {
+                {
+                    return new KeyValuePair<string, string>(employee.FirstName, department.Name);
+                }
+            };
+
+            var result = LINQFunctions.Join(employees, departmentList,
+                                        employee => outerFunc(employee), department => innerFunc(department),
+                                        (employee, department) =>
+                                        selector(employee, department));
+
+            Assert.Throws<ArgumentNullException>(() => result.Count());
+        }
+        [Fact]
         public void TestAggregate()
         {
             int[] array = { 1, 2, 4, 5 };
