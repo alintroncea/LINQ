@@ -8,194 +8,7 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
-        public static IEnumerable<TSource> Except<TSource>(
-                                                    this IEnumerable<TSource> first,
-                                                    IEnumerable<TSource> second,
-                                                    IEqualityComparer<TSource> comparer)
-        {
-            if (first is null)
-            {
-                throw new ArgumentNullException(nameof(first));
-            }
-
-            if (second is null)
-            {
-                throw new ArgumentNullException(nameof(second));
-            }
-
-            foreach (var x in first)
-            {
-                bool existsInSecond = false;
-                foreach (var y in second)
-                {
-                    if (comparer.Equals(x, y))
-                    {
-                        existsInSecond = true;
-                    }
-                }
-                if (!existsInSecond)
-                {
-                    yield return x;
-                }
-            }
-        }
-
-        public static IEnumerable<TSource> Intersect<TSource>(
-                                           this IEnumerable<TSource> first,
-                                           IEnumerable<TSource> second,
-                                           IEqualityComparer<TSource> comparer)
-        {
-
-            if(first is null)
-            {
-                throw new ArgumentNullException(nameof(first));
-            }
-
-            if (second is null)
-            {
-                throw new ArgumentNullException(nameof(second));
-            }
-
-            foreach (var x in first)
-            {
-                foreach (var y in second)
-                {
-                    if (comparer.Equals(x, y))
-                    {
-                        yield return x;
-                    }
-                }
-            }
-        }
-        public static IEnumerable<TSource> Union<TSource>(
-                                            this IEnumerable<TSource> first,
-                                            IEnumerable<TSource> second,
-                                            IEqualityComparer<TSource> comparer)
-        {
-            if (first is null)
-            {
-                throw new ArgumentNullException(nameof(first));
-            }
-            if (second is null)
-            {
-                throw new ArgumentNullException(nameof(second));
-            }
-
-            HashSet<TSource> hashSet = new HashSet<TSource>(comparer);
-
-            foreach (var current in first)
-            {
-                hashSet.Add(current);
-            }
-
-            foreach (var current in second)
-            {
-                hashSet.Add(current);
-            }
-
-            return hashSet;
-        }
-
-        public static IEnumerable<TSource> Distinct<TSource>(
-                                            this IEnumerable<TSource> source,
-                                            IEqualityComparer<TSource> comparer)
-        {
-            if(source is null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-            HashSet<TSource> hashSet = new HashSet<TSource>(comparer);
-
-            foreach (var current in source)
-            {
-                hashSet.Add(current);
-            }
-            return hashSet;
-        }
-
-        public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
-                                                this IEnumerable<TOuter> outer,
-                                                IEnumerable<TInner> inner,
-                                                Func<TOuter, TKey> outerKeySelector,
-                                                Func<TInner, TKey> innerKeySelector,
-                                                Func<TOuter, TInner, TResult> resultSelector)
-        {
-            if (outer is null)
-            {
-                throw new ArgumentNullException(nameof(outer));
-            }
-
-            if (inner is null)
-            {
-                throw new ArgumentNullException(nameof(inner));
-            }
-
-            if (outerKeySelector is null)
-            {
-                throw new ArgumentNullException(nameof(outerKeySelector));
-            }
-
-            if (innerKeySelector is null)
-            {
-                throw new ArgumentNullException(nameof(innerKeySelector));
-            }
-
-            if (resultSelector is null)
-            {
-                throw new ArgumentNullException(nameof(resultSelector));
-            }
-
-            var shortestLength = Math.Min(outer.Count(), inner.Count());
-
-            IEnumerator<TOuter> outerEnumerator = outer.GetEnumerator();
-            IEnumerator<TInner> innerEnumerator = inner.GetEnumerator();
-
-            for (int i = 0; i < shortestLength; i++)
-            {
-                while(outerEnumerator.MoveNext() && innerEnumerator.MoveNext())
-                {
-                    var firstKey = outerKeySelector(outerEnumerator.Current);
-                    var secondKey = innerKeySelector(innerEnumerator.Current);
-
-                    if (firstKey.Equals(secondKey))
-                    {
-                        yield return resultSelector(outerEnumerator.Current, innerEnumerator.Current);
-                    }
-                }             
-            }
-        }
-        public static TAccumulate Aggregate<TSource, TAccumulate>(
-                                            this IEnumerable<TSource> source,
-                                            TAccumulate seed,
-                                            Func<TAccumulate, TSource, TAccumulate> func)
-        {
-            if (source is null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (seed == null)
-            {
-                throw new ArgumentNullException(nameof(seed));
-            }
-
-
-            if (func is null)
-            {
-                throw new ArgumentNullException(nameof(func));
-            }
-
-            TAccumulate result = seed;
-
-            foreach (var element in source)
-            {
-                result = func(result, element);
-            }
-
-            return result;
-        }
-
-
+       
         public static IEnumerable<TResult> Zip<TFirst, TSecond, TResult>(
                                                this IEnumerable<TFirst> first,
                                                IEnumerable<TSecond> second,
@@ -205,12 +18,12 @@ namespace LINQ
 
             if (first is null)
             {
-                throw new ArgumentNullException(nameof(first));
+                EnsureArgumentIsNotNull(nameof(first));
             }
 
             if (second is null)
             {
-                throw new ArgumentNullException(nameof(second));
+                EnsureArgumentIsNotNull(nameof(second));
             }
 
             IEnumerator<TFirst> firstEnumerator = first.GetEnumerator();
@@ -233,18 +46,18 @@ namespace LINQ
         {
             if (source is null)
             {
-                throw new ArgumentNullException(nameof(source));
+                EnsureArgumentIsNotNull(nameof(source));
             }
 
             if (keySelector is null)
             {
-                throw new ArgumentNullException(nameof(keySelector));
+                EnsureArgumentIsNotNull(nameof(keySelector));
             }
 
 
             if (elementSelector is null)
             {
-                throw new ArgumentNullException(nameof(elementSelector));
+                EnsureArgumentIsNotNull(nameof(elementSelector));
             }
 
             Dictionary<TKey, TElement> dictionary = new Dictionary<TKey, TElement>();
@@ -261,12 +74,12 @@ namespace LINQ
         {
             if (source is null)
             {
-                throw new ArgumentNullException(nameof(source));
+                EnsureArgumentIsNotNull(nameof(source));
             }
 
             if (selector is null)
             {
-                throw new ArgumentNullException(nameof(selector));
+                EnsureArgumentIsNotNull(nameof(selector));
             }
 
             foreach (var current in source)
@@ -279,12 +92,12 @@ namespace LINQ
         {
             if (source is null)
             {
-                throw new ArgumentNullException(nameof(source));
+                EnsureArgumentIsNotNull(nameof(source));
             }
 
             if (predicate is null)
             {
-                throw new ArgumentNullException(nameof(predicate));
+                EnsureArgumentIsNotNull(nameof(predicate));
             }
 
             foreach (var current in source)
@@ -300,12 +113,12 @@ namespace LINQ
         {
             if (source is null)
             {
-                throw new ArgumentNullException(nameof(source));
+                EnsureArgumentIsNotNull(nameof(source));
             }
 
             if (selector is null)
             {
-                throw new ArgumentNullException(nameof(selector));
+                EnsureArgumentIsNotNull(nameof(selector));
             }
 
             foreach (var current in source)
@@ -323,12 +136,12 @@ namespace LINQ
         {
             if (source is null)
             {
-                throw new ArgumentNullException(nameof(source));
+                EnsureArgumentIsNotNull(nameof(source));
             }
 
             if (predicate is null)
             {
-                throw new ArgumentNullException(nameof(predicate));
+                EnsureArgumentIsNotNull(nameof(predicate));
             }
 
             foreach (var element in source)
@@ -346,7 +159,7 @@ namespace LINQ
         {
             if (source is null)
             {
-                throw new ArgumentNullException(nameof(source));
+                EnsureArgumentIsNotNull(nameof(source));
             }
 
             foreach (var element in source)
@@ -364,7 +177,7 @@ namespace LINQ
         {
             if (source is null)
             {
-                throw new ArgumentNullException(nameof(source));
+                EnsureArgumentIsNotNull(nameof(source));
             }
 
             if (source.Count() == 0)
@@ -383,5 +196,9 @@ namespace LINQ
             throw new InvalidOperationException("No element has been found");
         }
       
+        public static void EnsureArgumentIsNotNull(string source)
+        {
+            throw new ArgumentNullException(source);
+        }
     }
 }
