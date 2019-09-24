@@ -16,8 +16,7 @@ namespace LINQ
             EnsureArgumentIsNotNull(source, nameof(source));
 
            
-            int i = 0;
-            int k = i + 1;
+            int k = 1;
 
             var firstEnumerator = source.GetEnumerator();
 

@@ -11,11 +11,11 @@ namespace LINQ
         static void Main(string[] args)
         {
             string[] strings = { "Mara", "Mara", "Ana", "Andreea" };
-            int[] numbers = {1,4,3,1,299,5,299};
-            var distinctEqualityComparer = new Comparer<int>();
+
+            var distinctEqualityComparer = new Comparer<string>();
 
 
-            var result = LINQFunctions.Distinct(numbers, distinctEqualityComparer);
+            var result = LINQFunctions.Distinct(strings, distinctEqualityComparer);
 
             foreach(var current in result)
             {
