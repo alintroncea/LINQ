@@ -8,6 +8,25 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
+        public void TestDistinct()
+        {
+            string[] employeesNames = { "Mara", "Mara", "Ana", "Andreea" };
+            var distinctEqualityComparer = new Comparer<string>();
+
+
+            var result = LINQFunctions.Distinct(employeesNames, distinctEqualityComparer);
+
+            Assert.Equal(3, result.Count());
+        }
+        [Fact]
+        public void TestDistinctWhenThrowingExceptions()
+        {
+            string[] employeesNames = null;
+
+            var result = LINQFunctions.Distinct(employeesNames, new Comparer<string>());
+            Assert.Throws<ArgumentNullException>(() => result.Count());
+        }
+        [Fact]
         public void TestJoin()
         {
             Person magnus = new Person { Name = "Hedlund, Magnus" };

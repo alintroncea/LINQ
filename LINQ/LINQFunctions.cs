@@ -8,6 +8,40 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
+
+        public static IEnumerable<TSource> Distinct<TSource>(
+                                            this IEnumerable<TSource> source,
+                                            IEqualityComparer<TSource> comparer)
+        {
+            EnsureArgumentIsNotNull(source, nameof(source));
+
+           
+            int i = 0;
+            int k = i + 1;
+
+            var firstEnumerator = source.GetEnumerator();
+
+            while (firstEnumerator.MoveNext())
+            {
+                bool duplicate = false;
+                var secondEnumerator = source.Skip(k++).GetEnumerator();
+
+                while (secondEnumerator.MoveNext())
+                {
+                    if (comparer.Equals(firstEnumerator.Current, secondEnumerator.Current))
+                    {
+                        duplicate = true;
+                    }
+                }
+
+                if (!duplicate)
+                {
+                    yield return firstEnumerator.Current;
+                }
+            }
+
+        }
+
         public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
                                                this IEnumerable<TOuter> outer,
                                                IEnumerable<TInner> inner,
