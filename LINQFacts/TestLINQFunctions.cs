@@ -10,52 +10,35 @@ namespace LINQ
         [Fact]
         public void TestJoin()
         {
-            var employees = new List<Employee>
-           {
-                new Employee {ID = 1,
-                    FirstName = "Mihai",
-                    LastName = "Popescu",
-                    Salary = 90000 },
+            Person magnus = new Person { Name = "Hedlund, Magnus" };
+            Person terry = new Person { Name = "Adams, Terry" };
+            Person charlotte = new Person { Name = "Weiss, Charlotte" };
 
-                new Employee {ID = 2,
-                    FirstName = "Andreea",
-                    LastName = "Calinescu",
-                    Salary = 100000},
+            Pet barley = new Pet { Name = "Barley", Owner = terry };
+            Pet boots = new Pet { Name = "Boots", Owner = terry };
+            Pet whiskers = new Pet { Name = "Whiskers", Owner = charlotte };
+            Pet daisy = new Pet { Name = "Daisy", Owner = magnus };
 
-                new Employee {ID = 3,
-                    FirstName = "George",
-                    LastName = "Petrescu",
-                    Salary = 100000,
-                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+            List<Person> people = new List<Person> { magnus, terry, charlotte };
+            List<Pet> pets = new List<Pet> { barley, boots, whiskers, daisy };
 
-           };
+            Func<Person, Person> outerFunc = (person) => person;
+            Func<Pet, Person> innerFunc = (pet) => pet.Owner;
 
-            var departmentList = new List<Department>
-           {
-               new Department{ DepartmentID = 1, Name ="HR"},
-               new Department{DepartmentID = 2, Name ="Marketing"},
-               new Department{DepartmentID = 4, Name ="Sales"}
-           };
-
-            Func<Employee, int> outerFunc = (employee) => employee.ID;
-            Func<Department, int> innerFunc = (department) => department.DepartmentID;
-            Func<Employee, Department, KeyValuePair<string, string>> selector = (employee, department) =>
+            Func<Person, Pet, KeyValuePair<Person, Pet>> selector = (person, pet) =>
             {
                 {
-                    return new KeyValuePair<string, string>(employee.FirstName, department.Name);
+                    return new KeyValuePair<Person, Pet>(person, pet);
                 }
             };
 
-            var result = LINQFunctions.Join(employees, departmentList,
-                                        employee => outerFunc(employee), department => innerFunc(department),
-                                        (employee, department) =>
-                                        selector(employee, department));
 
-            var kvp1 = new KeyValuePair<string, string>("Mihai", "HR");
-            var kvp2 = new KeyValuePair<string, string>("George", "Sales");
+            var query = people.Join(pets, x => outerFunc(x), y => innerFunc(y), (person, pet) => selector(person, pet));
 
-            Assert.True(result.Contains(kvp1));
-            Assert.False(result.Contains(kvp2));
+            var kvp1 = new KeyValuePair<Person, Pet>(magnus, daisy);
+
+            Assert.True(query.Contains(kvp1));
+
         }
         [Fact]
         public void TestJoinWhenThrowingExeptions()

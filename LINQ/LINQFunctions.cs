@@ -40,21 +40,17 @@ namespace LINQ
                 throw new ArgumentNullException(nameof(resultSelector));
             }
 
-            var shortestLength = Math.Min(outer.Count(), inner.Count());
-
-            IEnumerator<TOuter> outerEnumerator = outer.GetEnumerator();
-            IEnumerator<TInner> innerEnumerator = inner.GetEnumerator();
-
-            for (int i = 0; i < shortestLength; i++)
+            foreach (var x in outer)
             {
-                while (outerEnumerator.MoveNext() && innerEnumerator.MoveNext())
-                {
-                    var firstKey = outerKeySelector(outerEnumerator.Current);
-                    var secondKey = innerKeySelector(innerEnumerator.Current);
+                var outerKey = outerKeySelector(x);
 
-                    if (firstKey.Equals(secondKey))
+                foreach (var y in inner)
+                {
+                    var innerKey = innerKeySelector(y);
+
+                    if (outerKey.Equals(innerKey))
                     {
-                        yield return resultSelector(outerEnumerator.Current, innerEnumerator.Current);
+                        yield return resultSelector(x, y);
                     }
                 }
             }
@@ -109,10 +105,10 @@ namespace LINQ
 
             IEnumerator<TFirst> firstEnumerator = first.GetEnumerator();
             IEnumerator<TSecond> secondEnumerator = second.GetEnumerator();
-         
+
             for (int i = 0; i < shortestLength; i++)
             {
-                while(firstEnumerator.MoveNext() && secondEnumerator.MoveNext())
+                while (firstEnumerator.MoveNext() && secondEnumerator.MoveNext())
                 {
                     yield return resultSelector(firstEnumerator.Current, secondEnumerator.Current);
                 }
@@ -144,7 +140,7 @@ namespace LINQ
             Dictionary<TKey, TElement> dictionary = new Dictionary<TKey, TElement>();
 
             foreach (var current in source)
-            {               
+            {
                 dictionary.Add(keySelector(current), elementSelector(current));
             }
 
@@ -276,7 +272,7 @@ namespace LINQ
 
             throw new InvalidOperationException("No element has been found");
         }
-      
+
         public static void EnsureArgumentIsNotNull(string source)
         {
             throw new ArgumentNullException(source);
