@@ -15,30 +15,12 @@ namespace LINQ
                                                Func<TInner, TKey> innerKeySelector,
                                                Func<TOuter, TInner, TResult> resultSelector)
         {
-            if (outer is null)
-            {
-                throw new ArgumentNullException(nameof(outer));
-            }
+            EnsureArgumentIsNotNull(outer, nameof(outer));
+            EnsureArgumentIsNotNull(inner, nameof(inner));
+            EnsureArgumentIsNotNull(outerKeySelector, nameof(outerKeySelector));
+            EnsureArgumentIsNotNull(innerKeySelector, nameof(innerKeySelector));
+            EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
 
-            if (inner is null)
-            {
-                throw new ArgumentNullException(nameof(inner));
-            }
-
-            if (outerKeySelector is null)
-            {
-                throw new ArgumentNullException(nameof(outerKeySelector));
-            }
-
-            if (innerKeySelector is null)
-            {
-                throw new ArgumentNullException(nameof(innerKeySelector));
-            }
-
-            if (resultSelector is null)
-            {
-                throw new ArgumentNullException(nameof(resultSelector));
-            }
 
             foreach (var x in outer)
             {
@@ -60,21 +42,10 @@ namespace LINQ
                                             TAccumulate seed,
                                             Func<TAccumulate, TSource, TAccumulate> func)
         {
-            if (source is null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+            EnsureArgumentIsNotNull(source, nameof(source));
+            EnsureArgumentIsNotNull(seed, nameof(seed));
+            EnsureArgumentIsNotNull(func, nameof(func));
 
-            if (seed == null)
-            {
-                throw new ArgumentNullException(nameof(seed));
-            }
-
-
-            if (func is null)
-            {
-                throw new ArgumentNullException(nameof(func));
-            }
 
             TAccumulate result = seed;
 
@@ -93,15 +64,9 @@ namespace LINQ
         {
             var shortestLength = Math.Min(first.Count(), second.Count());
 
-            if (first is null)
-            {
-                EnsureArgumentIsNotNull(nameof(first));
-            }
+            EnsureArgumentIsNotNull(first, nameof(first));
+            EnsureArgumentIsNotNull(second, nameof(second));
 
-            if (second is null)
-            {
-                EnsureArgumentIsNotNull(nameof(second));
-            }
 
             IEnumerator<TFirst> firstEnumerator = first.GetEnumerator();
             IEnumerator<TSecond> secondEnumerator = second.GetEnumerator();
@@ -121,21 +86,10 @@ namespace LINQ
                                                              Func<TSource, TKey> keySelector,
                                                              Func<TSource, TElement> elementSelector)
         {
-            if (source is null)
-            {
-                EnsureArgumentIsNotNull(nameof(source));
-            }
+            EnsureArgumentIsNotNull(source, nameof(source));
+            EnsureArgumentIsNotNull(keySelector, nameof(keySelector));
+            EnsureArgumentIsNotNull(elementSelector, nameof(source));
 
-            if (keySelector is null)
-            {
-                EnsureArgumentIsNotNull(nameof(keySelector));
-            }
-
-
-            if (elementSelector is null)
-            {
-                EnsureArgumentIsNotNull(nameof(elementSelector));
-            }
 
             Dictionary<TKey, TElement> dictionary = new Dictionary<TKey, TElement>();
 
@@ -149,15 +103,9 @@ namespace LINQ
 
         public static IEnumerable<TResult> Select<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
-            if (source is null)
-            {
-                EnsureArgumentIsNotNull(nameof(source));
-            }
+            EnsureArgumentIsNotNull(source, nameof(source));
+            EnsureArgumentIsNotNull(selector, nameof(selector));
 
-            if (selector is null)
-            {
-                EnsureArgumentIsNotNull(nameof(selector));
-            }
 
             foreach (var current in source)
             {
@@ -167,15 +115,8 @@ namespace LINQ
 
         public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source is null)
-            {
-                EnsureArgumentIsNotNull(nameof(source));
-            }
-
-            if (predicate is null)
-            {
-                EnsureArgumentIsNotNull(nameof(predicate));
-            }
+            EnsureArgumentIsNotNull(source, nameof(source));
+            EnsureArgumentIsNotNull(predicate, nameof(predicate));
 
             foreach (var current in source)
             {
@@ -188,15 +129,11 @@ namespace LINQ
 
         public static IEnumerable<TResult> SelectMany<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
         {
-            if (source is null)
-            {
-                EnsureArgumentIsNotNull(nameof(source));
-            }
+            EnsureArgumentIsNotNull(source, nameof(source));
 
-            if (selector is null)
-            {
-                EnsureArgumentIsNotNull(nameof(selector));
-            }
+
+            EnsureArgumentIsNotNull(selector, nameof(selector));
+
 
             foreach (var current in source)
             {
@@ -211,15 +148,10 @@ namespace LINQ
 
         public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source is null)
-            {
-                EnsureArgumentIsNotNull(nameof(source));
-            }
+            EnsureArgumentIsNotNull(source, nameof(source));
 
-            if (predicate is null)
-            {
-                EnsureArgumentIsNotNull(nameof(predicate));
-            }
+            EnsureArgumentIsNotNull(predicate, nameof(predicate));
+
 
             foreach (var element in source)
             {
@@ -234,10 +166,7 @@ namespace LINQ
 
         public static bool Any<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source is null)
-            {
-                EnsureArgumentIsNotNull(nameof(source));
-            }
+            EnsureArgumentIsNotNull(source, nameof(source));
 
             foreach (var element in source)
             {
@@ -252,10 +181,9 @@ namespace LINQ
 
         public static TSource First<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
-            if (source is null)
-            {
-                EnsureArgumentIsNotNull(nameof(source));
-            }
+
+            EnsureArgumentIsNotNull(source, nameof(source));
+
 
             if (source.Count() == 0)
             {
@@ -273,9 +201,12 @@ namespace LINQ
             throw new InvalidOperationException("No element has been found");
         }
 
-        public static void EnsureArgumentIsNotNull(string source)
+        public static void EnsureArgumentIsNotNull(object source, string name)
         {
-            throw new ArgumentNullException(source);
+            if (source is null)
+            {
+                throw new ArgumentNullException(name);
+            }
         }
     }
 }
