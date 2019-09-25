@@ -8,6 +8,24 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
+        public static IEnumerable<TSource> Union<TSource>(
+                                           this IEnumerable<TSource> first,
+                                           IEnumerable<TSource> second,
+                                           IEqualityComparer<TSource> comparer)
+        {
+            if (first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+            if (second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
+
+            var joined = first.Concat(second);
+            return Distinct(joined, comparer);
+
+        }
 
         public static IEnumerable<TSource> Distinct<TSource>(
                                             this IEnumerable<TSource> source,
@@ -15,29 +33,16 @@ namespace LINQ
         {
             EnsureArgumentIsNotNull(source, nameof(source));
 
-           
-            int k = 1;
+            var hashset = new HashSet<TSource>(comparer);
 
-            var firstEnumerator = source.GetEnumerator();
-
-            while (firstEnumerator.MoveNext())
+            foreach (var current in source)
             {
-                bool duplicate = false;
-                var secondEnumerator = source.Skip(k++).GetEnumerator();
-
-                while (secondEnumerator.MoveNext())
+                if (hashset.Add(current))
                 {
-                    if (comparer.Equals(firstEnumerator.Current, secondEnumerator.Current))
-                    {
-                        duplicate = true;
-                    }
-                }
-
-                if (!duplicate)
-                {
-                    yield return firstEnumerator.Current;
+                    yield return current;
                 }
             }
+
 
         }
 

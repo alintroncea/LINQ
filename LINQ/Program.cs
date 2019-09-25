@@ -10,14 +10,15 @@ namespace LINQ
     {
         static void Main(string[] args)
         {
+
             string[] strings = { "Mara", "Mara", "Ana", "Andreea" };
+            int[] numbers = { 1, 4, 4, 1, 5 };
 
-            var distinctEqualityComparer = new Comparer<string>();
+            var comparer = new Comparer<string>();
 
 
-            var result = LINQFunctions.Distinct(strings, distinctEqualityComparer);
-
-            foreach(var current in result)
+            var result = LINQFunctions.Distinct(strings, comparer);
+            foreach (var current in result)
             {
                 Console.WriteLine(current);
             }

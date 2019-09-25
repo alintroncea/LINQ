@@ -8,6 +8,38 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
+        public void TestUnion()
+        {
+            string[] oldEmployees = { "Andreea", "Maria", "Ioana" };
+            string[] newEmployees = { "Andreea", "George", "Andrei", "Ionut" };
+
+            var unionComparer = new Comparer<string>();
+            var result = LINQFunctions.Union(oldEmployees, newEmployees, unionComparer);
+
+            int counter = 0;
+
+            foreach (var current in result)
+            {
+                if (current.Equals("Andreea"))
+                {
+                    counter++;
+                }
+            }
+
+            Assert.Equal(1, counter);
+            Assert.Equal(6, result.Count());
+        }
+        [Fact]
+        public void TestUnionWhenThrowingExceptions()
+        {
+            string[] oldEmployees = null;
+            string[] newEmployees = { "Andreea", "George", "Andrei", "Ionut" };
+
+            var unionComparer = new Comparer<string>();
+            Assert.Throws<ArgumentNullException>(() => LINQFunctions.Union(oldEmployees, newEmployees, unionComparer));
+
+        }
+        [Fact]
         public void TestDistinct()
         {
             string[] employeesNames = { "Mara", "Mara", "Ana", "Andreea" };
