@@ -8,6 +8,86 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
+        public void TestIntersect()
+        {
+            List<Employee> oldEmployees = new List<Employee>
+            {
+                new Employee {ID = 104,
+                    FirstName = "Ionut",
+                    LastName = "Popescu",
+                    Salary = 90000,
+                    Departments = { new Department { Name = "Marketing" }, new Department {Name = "Sales" } } },
+
+                new Employee {ID = 105,
+                    FirstName = "Andreea",
+                    LastName = "Popescu",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+                new Employee { ID = 106,
+                    FirstName = "Mihai",
+                    LastName = "Andreescu",
+                    Salary = 160000,
+                    Departments = { new Department { Name = "Production" }, new Department {Name = "Sales" } } }
+                };
+
+            List<Employee> newEmployees = new List<Employee>
+            {
+                new Employee {ID = 104,
+                    FirstName = "George",
+                    LastName = "Petrescu",
+                    Salary = 90000,
+                    Departments = { new Department { Name = "Marketing" }, new Department {Name = "Sales" } } },
+
+                new Employee {ID = 105,
+                    FirstName = "Ionut",
+                    LastName = "Ghita",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+                new Employee { ID = 106,
+                    FirstName = "Ioana",
+                    LastName = "Mihaescu",
+                    Salary = 160000,
+                    Departments = { new Department { Name = "Production" }, new Department {Name = "Sales" } } }
+                };
+
+            var intersectComparer = new IntersectComparer();
+            var result = LINQFunctions.Intersect(oldEmployees, newEmployees, intersectComparer);
+
+            Assert.Equal(1, result.Count());
+        }
+        [Fact]
+        public void TestIntersectWhenThrowingExceptions()
+        {
+            List<Employee> oldEmployees = null;
+
+            List<Employee> newEmployees = new List<Employee>
+            {
+                new Employee {ID = 104,
+                    FirstName = "George",
+                    LastName = "Petrescu",
+                    Salary = 90000,
+                    Departments = { new Department { Name = "Marketing" }, new Department {Name = "Sales" } } },
+
+                new Employee {ID = 105,
+                    FirstName = "Ionut",
+                    LastName = "Ghita",
+                    Salary = 100000,
+                    Departments ={ new Department { Name = "Advertisement" }, new Department {Name = "Production" } } },
+
+                new Employee { ID = 106,
+                    FirstName = "Ioana",
+                    LastName = "Mihaescu",
+                    Salary = 160000,
+                    Departments = { new Department { Name = "Production" }, new Department {Name = "Sales" } } }
+                };
+
+
+            var result = LINQFunctions.Intersect(oldEmployees, newEmployees, new IntersectComparer());
+            Assert.Throws<ArgumentNullException>(() => result.Count());
+        }
+        [Fact]
         public void TestUnion()
         {
             string[] oldEmployees = { "Andreea", "Maria", "Ioana" };
