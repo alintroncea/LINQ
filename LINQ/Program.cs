@@ -11,17 +11,17 @@ namespace LINQ
         static void Main(string[] args)
         {
 
-            string[] strings1 = { "Mara","Ana", "Andreea" };
-            string[] strings2 = { "Mara", "Ioana", "Mihaela", "Andreea" };
+            //string[] strings1 = { "Mara","Ana", "Andreea" };
+            //string[] strings2 = { "Mara", "Ioana", "Mihaela", "Andreea" };
 
-            //int[] numbers1 = { 1, 4, 3, 9, 8 };
+            int[] numbers1 = { 1, 4, 3, 9, 8 };
 
-            //int[] numbers2 = { 1, 4, 4, 1, 5 };
+            int[] numbers2 = { 1, 4, 4, 1, 5 };
 
-            var comparer = new Comparer<string>();
+            var comparer = new Comparer<int>();
 
 
-            var result = LINQFunctions.Intersect(strings1, strings2, comparer);
+            var result = LINQFunctions.Except(numbers1, numbers2, comparer);
             foreach (var current in result)
             {
                 Console.WriteLine(current);

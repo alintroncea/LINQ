@@ -8,6 +8,25 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
+        public static IEnumerable<TSource> Except<TSource>(
+                                                   this IEnumerable<TSource> first,
+                                                   IEnumerable<TSource> second,
+                                                   IEqualityComparer<TSource> comparer)
+        {
+            EnsureArgumentIsNotNull(first, nameof(first));
+            EnsureArgumentIsNotNull(second, nameof(second));
+
+            var hashset = new HashSet<TSource>(second, comparer);
+            
+            foreach (var x in first)
+            {
+                if (!hashset.Contains(x))
+                {
+                    yield return x;
+                }
+            }
+        }
+
         public static IEnumerable<TSource> Intersect<TSource>(
                                           this IEnumerable<TSource> first,
                                           IEnumerable<TSource> second,

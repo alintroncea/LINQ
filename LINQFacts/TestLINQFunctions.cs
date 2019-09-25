@@ -8,6 +8,28 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
+        public void TestExcept()
+        {
+            string[] firstArray = { "Andreea", "Maria", "Ioana" };
+            string[] secondArray = { "Andreea", "Maria", "Andrei", "Ionut" };
+
+
+            var exceptComparer = new Comparer<string>();
+            var result = LINQFunctions.Except(firstArray, secondArray, exceptComparer);
+
+            Assert.Equal(1, result.Count());
+        }
+        [Fact]
+        public void TestExceptWhenThrowingExceptions()
+        {
+            string[] firstArray = { "Andreea", "Maria", "Ioana" };
+            string[] secondArray = null;
+
+            var result = LINQFunctions.Except(firstArray, secondArray, new Comparer<string>());
+            Assert.Throws<ArgumentNullException>(() => result.Count());
+        }
+
+        [Fact]
         public void TestIntersect()
         {
             List<Employee> oldEmployees = new List<Employee>
