@@ -8,6 +8,30 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
+        public void TestGroupBy()
+        {
+            var students = Student.GetSudents();
+
+            Func<Student, string> elementSelector = x => x.Name;
+            Func<Student, string> keySelector = x => x.Class;
+            Func<string, IEnumerable<string>, KeyValuePair<string, IEnumerable<string>>> resultSelector = (Class, NameList) =>
+            {
+                {
+                    return new KeyValuePair<string, IEnumerable<string>>(Class, NameList);
+                }
+            };
+
+            var result = LINQFunctions.GroupBy(students,
+                x => keySelector(x),
+                y => elementSelector(y),
+                (ClassName, NamesList) => resultSelector(ClassName, NamesList),
+                new Comparer<string>()
+           );
+
+
+            Assert.Equal(2, result.Count());
+        }
+        [Fact]
         public void TestExcept()
         {
             string[] firstArray = { "Andreea", "Maria", "Ioana" };

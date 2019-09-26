@@ -8,6 +8,64 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
+        public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult>(
+                                                    this IEnumerable<TSource> source,
+                                                    Func<TSource, TKey> keySelector,
+                                                    Func<TSource, TElement> elementSelector,
+                                                    Func<TKey, IEnumerable<TElement>, TResult> resultSelector,
+                                                    IEqualityComparer<TKey> comparer)
+        {
+            EnsureArgumentIsNotNull(source, nameof(source));
+            EnsureArgumentIsNotNull(keySelector, nameof(keySelector));
+            EnsureArgumentIsNotNull(elementSelector, nameof(elementSelector));
+            EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
+            EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
+
+            var keys = new HashSet<TKey>(comparer);
+
+            foreach (var current in source)
+            {
+                var currentKey = keySelector(current);
+
+                if (keys.Add(currentKey))
+                {
+                    Func<TSource, bool> equalKeys = (currentElement) => comparer.Equals(keySelector(currentElement), currentKey);
+                    var returnedElements = source.Where(x => equalKeys(x)).Select(y => elementSelector(y));
+
+                    yield return resultSelector(currentKey, returnedElements);
+                 
+                }
+            }
+        }
+        public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
+                                              this IEnumerable<TOuter> outer,
+                                              IEnumerable<TInner> inner,
+                                              Func<TOuter, TKey> outerKeySelector,
+                                              Func<TInner, TKey> innerKeySelector,
+                                              Func<TOuter, TInner, TResult> resultSelector)
+        {
+            EnsureArgumentIsNotNull(outer, nameof(outer));
+            EnsureArgumentIsNotNull(inner, nameof(inner));
+            EnsureArgumentIsNotNull(outerKeySelector, nameof(outerKeySelector));
+            EnsureArgumentIsNotNull(innerKeySelector, nameof(innerKeySelector));
+            EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
+
+
+            foreach (var x in outer)
+            {
+                var outerKey = outerKeySelector(x);
+
+                foreach (var y in inner)
+                {
+                    var innerKey = innerKeySelector(y);
+
+                    if (outerKey.Equals(innerKey))
+                    {
+                        yield return resultSelector(x, y);
+                    }
+                }
+            }
+        }
         public static IEnumerable<TSource> Except<TSource>(
                                                    this IEnumerable<TSource> first,
                                                    IEnumerable<TSource> second,
@@ -17,7 +75,7 @@ namespace LINQ
             EnsureArgumentIsNotNull(second, nameof(second));
 
             var hashset = new HashSet<TSource>(second, comparer);
-            
+
             foreach (var x in first)
             {
                 if (!hashset.Contains(x))
@@ -84,35 +142,7 @@ namespace LINQ
 
         }
 
-        public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
-                                               this IEnumerable<TOuter> outer,
-                                               IEnumerable<TInner> inner,
-                                               Func<TOuter, TKey> outerKeySelector,
-                                               Func<TInner, TKey> innerKeySelector,
-                                               Func<TOuter, TInner, TResult> resultSelector)
-        {
-            EnsureArgumentIsNotNull(outer, nameof(outer));
-            EnsureArgumentIsNotNull(inner, nameof(inner));
-            EnsureArgumentIsNotNull(outerKeySelector, nameof(outerKeySelector));
-            EnsureArgumentIsNotNull(innerKeySelector, nameof(innerKeySelector));
-            EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
 
-
-            foreach (var x in outer)
-            {
-                var outerKey = outerKeySelector(x);
-
-                foreach (var y in inner)
-                {
-                    var innerKey = innerKeySelector(y);
-
-                    if (outerKey.Equals(innerKey))
-                    {
-                        yield return resultSelector(x, y);
-                    }
-                }
-            }
-        }
         public static TAccumulate Aggregate<TSource, TAccumulate>(
                                             this IEnumerable<TSource> source,
                                             TAccumulate seed,
