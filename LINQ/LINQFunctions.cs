@@ -8,6 +8,15 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
+        //public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(
+        //                                                   this IEnumerable<TSource> source,
+        //                                                   Func<TSource, TKey> keySelector,
+        //                                                   IComparer<TKey> comparer)
+        //{
+        //    var ordered = new OrderedEnumerable<TSource>(source, comparer );
+
+        //}
+
         public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult>(
                                                     this IEnumerable<TSource> source,
                                                     Func<TSource, TKey> keySelector,
@@ -21,22 +30,33 @@ namespace LINQ
             EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
             EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
 
-            var keys = new HashSet<TKey>(comparer);
+
+            var dictionary = new Dictionary<TKey, HashSet<TElement>>(comparer);
 
             foreach (var current in source)
             {
-                var currentKey = keySelector(current);
+                var element = elementSelector(current);
+                var key = keySelector(current);
 
-                if (keys.Add(currentKey))
+                if (dictionary.ContainsKey(key))
                 {
-                    Func<TSource, bool> equalKeys = (currentElement) => comparer.Equals(keySelector(currentElement), currentKey);
-                    var returnedElements = source.Where(x => equalKeys(x)).Select(y => elementSelector(y));
-
-                    yield return resultSelector(currentKey, returnedElements);
-                 
+                    dictionary[key].Add(element);
                 }
+                else
+                {
+                    var newList = new HashSet<TElement>() { element };
+                    dictionary.Add(key, newList);
+                }
+
             }
+
+            foreach (var current in dictionary)
+            {
+                yield return resultSelector(current.Key, current.Value);
+            }
+
         }
+
         public static IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(
                                               this IEnumerable<TOuter> outer,
                                               IEnumerable<TInner> inner,
@@ -67,9 +87,9 @@ namespace LINQ
             }
         }
         public static IEnumerable<TSource> Except<TSource>(
-                                                   this IEnumerable<TSource> first,
-                                                   IEnumerable<TSource> second,
-                                                   IEqualityComparer<TSource> comparer)
+                                                  this IEnumerable<TSource> first,
+                                                  IEnumerable<TSource> second,
+                                                  IEqualityComparer<TSource> comparer)
         {
             EnsureArgumentIsNotNull(first, nameof(first));
             EnsureArgumentIsNotNull(second, nameof(second));
@@ -86,9 +106,9 @@ namespace LINQ
         }
 
         public static IEnumerable<TSource> Intersect<TSource>(
-                                          this IEnumerable<TSource> first,
-                                          IEnumerable<TSource> second,
-                                          IEqualityComparer<TSource> comparer)
+                                                      this IEnumerable<TSource> first,
+                                                      IEnumerable<TSource> second,
+                                                      IEqualityComparer<TSource> comparer)
         {
             EnsureArgumentIsNotNull(first, nameof(first));
             EnsureArgumentIsNotNull(second, nameof(second));
@@ -106,9 +126,9 @@ namespace LINQ
 
         }
         public static IEnumerable<TSource> Union<TSource>(
-                                           this IEnumerable<TSource> first,
-                                           IEnumerable<TSource> second,
-                                           IEqualityComparer<TSource> comparer)
+                                                   this IEnumerable<TSource> first,
+                                                   IEnumerable<TSource> second,
+                                                   IEqualityComparer<TSource> comparer)
         {
             EnsureArgumentIsNotNull(first, nameof(first));
             EnsureArgumentIsNotNull(second, nameof(second));
@@ -124,8 +144,8 @@ namespace LINQ
         }
 
         public static IEnumerable<TSource> Distinct<TSource>(
-                                            this IEnumerable<TSource> source,
-                                            IEqualityComparer<TSource> comparer)
+                                                    this IEnumerable<TSource> source,
+                                                    IEqualityComparer<TSource> comparer)
         {
             EnsureArgumentIsNotNull(source, nameof(source));
 

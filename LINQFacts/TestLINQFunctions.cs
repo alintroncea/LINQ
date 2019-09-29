@@ -25,7 +25,7 @@ namespace LINQ
                 x => keySelector(x),
                 y => elementSelector(y),
                 (ClassName, NamesList) => resultSelector(ClassName, NamesList),
-                new Comparer<string>()
+                new EqualityComparer<string>()
            );
 
 
@@ -38,7 +38,7 @@ namespace LINQ
             string[] secondArray = { "Andreea", "Maria", "Andrei", "Ionut" };
 
 
-            var exceptComparer = new Comparer<string>();
+            var exceptComparer = new EqualityComparer<string>();
             var result = LINQFunctions.Except(firstArray, secondArray, exceptComparer);
 
             Assert.Equal(1, result.Count());
@@ -49,7 +49,7 @@ namespace LINQ
             string[] firstArray = { "Andreea", "Maria", "Ioana" };
             string[] secondArray = null;
 
-            var result = LINQFunctions.Except(firstArray, secondArray, new Comparer<string>());
+            var result = LINQFunctions.Except(firstArray, secondArray, new EqualityComparer<string>());
             Assert.Throws<ArgumentNullException>(() => result.Count());
         }
 
@@ -139,7 +139,7 @@ namespace LINQ
             string[] oldEmployees = { "Andreea", "Maria", "Ioana" };
             string[] newEmployees = { "Andreea", "George", "Andrei", "Ionut" };
 
-            var unionComparer = new Comparer<string>();
+            var unionComparer = new EqualityComparer<string>();
             var result = LINQFunctions.Union(oldEmployees, newEmployees, unionComparer);
 
             int counter = 0;
@@ -161,7 +161,7 @@ namespace LINQ
             string[] oldEmployees = null;
             string[] newEmployees = { "Andreea", "George", "Andrei", "Ionut" };
 
-            var unionComparer = new Comparer<string>();
+            var unionComparer = new EqualityComparer<string>();
             Assert.Throws<ArgumentNullException>(() => LINQFunctions.Union(oldEmployees, newEmployees, unionComparer));
 
         }
@@ -169,7 +169,7 @@ namespace LINQ
         public void TestDistinct()
         {
             string[] employeesNames = { "Mara", "Mara", "Ana", "Andreea" };
-            var distinctEqualityComparer = new Comparer<string>();
+            var distinctEqualityComparer = new EqualityComparer<string>();
 
 
             var result = LINQFunctions.Distinct(employeesNames, distinctEqualityComparer);
@@ -181,7 +181,7 @@ namespace LINQ
         {
             string[] employeesNames = null;
 
-            var result = LINQFunctions.Distinct(employeesNames, new Comparer<string>());
+            var result = LINQFunctions.Distinct(employeesNames, new EqualityComparer<string>());
             Assert.Throws<ArgumentNullException>(() => result.Count());
         }
         [Fact]

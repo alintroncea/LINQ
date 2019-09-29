@@ -20,12 +20,12 @@ namespace LINQ
         public static List<Student> GetSudents()
         {
             var list = new List<Student>();
-            list.Add(new Student(1, "Andrei", "Computer Science"));
+            list.Add(new Student(4, "Andrei", "Computer Science"));
             list.Add(new Student(2, "Mihai", "Biology"));
 
-            list.Add(new Student(3, "Maria", "Computer Science"));
-            list.Add(new Student(4, "Ana-Maria", "Biology"));
-
+            list.Add(new Student(1, "Maria", "Computer Science"));
+            list.Add(new Student(3, "Ana-Maria", "Biology"));
+            list.Add(new Student(3, "Ioana", "Biology"));
             return list;
         }
     }

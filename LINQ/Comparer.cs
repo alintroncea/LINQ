@@ -5,26 +5,11 @@ using System.Text;
 
 namespace LINQ
 {
-    public class Comparer<T> : IEqualityComparer<T>
+    public class Comparer<T> : IComparer<Student>
     {
-        public bool Equals(T x, T y)
+        public int Compare(Student x, Student y)
         {
-            if (x == null || y == null)
-            {
-                return false;
-            }
-
-            return x.Equals(y);
-        }
-
-        public int GetHashCode(T obj)
-        {
-            if (obj == null)
-            {
-                return 0;
-            }
-            return obj.GetHashCode();
+            return x.ID.CompareTo(y.ID);
         }
     }
 }
-
