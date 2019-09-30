@@ -7,30 +7,48 @@ namespace LINQ
 {
     public class OrderedEnumerable<T> : IOrderedEnumerable<T>
     {
-        private IEnumerable<object> source;
-        private IComparer<object> comparer;
 
-       
-        public OrderedEnumerable(IEnumerable<T> source, IComparer<T> comparer)
+        public OrderedEnumerable(IEnumerable<T> source)
         {
             Source = source;
-            Comparer = comparer;
         }
+
         private IEnumerable<T> Source { get; set; }
-        private IComparer<T> Comparer { get; set; }
 
         public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey> comparer, bool descending)
         {
-            return new OrderedEnumerable<T>(Source, Comparer);
+            var list = new List<T>(Source.Select(x => x));       
+            var length = list.Count();
+
+            bool isSorted = false;
+            while (!isSorted)
+            {
+                isSorted = true;
+                for (int i = 0; i < length - 1; i++)
+                {
+                    for (int j = 0; j < length - i - 1; j++)
+                    {
+                        var firstKey = keySelector(list[j]);
+                        var secondKey = keySelector(list[j + 1]);
+
+                        if (comparer.Compare(firstKey, secondKey) == 1)
+                        {
+                            var temp = list[j];
+                            list[j] = list[j + 1];
+                            list[j + 1] = temp;
+                            isSorted = false;
+                        }
+                    }
+                }
+            }
+            return new OrderedEnumerable<T>(list);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            var enumerator = Source.GetEnumerator();
-
-            while (enumerator.MoveNext())
+            foreach (var current in Source)
             {
-                yield return enumerator.Current;
+                yield return current;
             }
         }
 
@@ -38,5 +56,6 @@ namespace LINQ
         {
             return GetEnumerator();
         }
+
     }
 }

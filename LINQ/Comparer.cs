@@ -5,11 +5,11 @@ using System.Text;
 
 namespace LINQ
 {
-    public class Comparer<T> : IComparer<Student>
+    public class Comparer<T> : IComparer<T>
     {
-        public int Compare(Student x, Student y)
+        public int Compare(T x, T y)
         {
-            return x.ID.CompareTo(y.ID);
+            return x.GetHashCode().CompareTo(y.GetHashCode());
         }
     }
 }

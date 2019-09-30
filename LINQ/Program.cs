@@ -20,29 +20,16 @@ namespace LINQ
 
             var students = Student.GetSudents();
 
-            Func<Student, string> elementSelector = x => x.Name;
-            Func<Student, string> keySelector = x => x.Class;
-            Func<string, IEnumerable<string>, KeyValuePair<string, IEnumerable<string>>> resultSelector = (Class, NameList) =>
-            {
-                {
-                    return new KeyValuePair<string, IEnumerable<string>>(Class, NameList);
-                }
-            };
+            Func<Student, int> myFunc = (x) => x.ID;
+            var comparer = new Comparer<int>();
+            var ordered = new OrderedEnumerable<Student>(students);
 
-            var result = LINQFunctions.GroupBy(students,
-                x => keySelector(x),
-                y => elementSelector(y),
-                (ClassName, NamesList) => resultSelector(ClassName, NamesList),
-                new EqualityComparer<string>()
-           ) ;
+            var result = LINQFunctions.OrderBy(students, x=>myFunc(x), comparer);
 
-            foreach(var current in result)
+
+            foreach (var current in result)
             {
-                Console.WriteLine(current.Key);
-                foreach(var student in current.Value)
-                {
-                    Console.WriteLine(student);
-                }
+                Console.WriteLine("NAME: " + current.Name + " ID: " + current.ID);
             }
         }
     }

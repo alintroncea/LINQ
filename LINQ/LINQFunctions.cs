@@ -8,14 +8,17 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
-        //public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(
-        //                                                   this IEnumerable<TSource> source,
-        //                                                   Func<TSource, TKey> keySelector,
-        //                                                   IComparer<TKey> comparer)
-        //{
-        //    var ordered = new OrderedEnumerable<TSource>(source, comparer );
+        public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(
+                                                           this IEnumerable<TSource> source,
+                                                           Func<TSource, TKey> keySelector,
+                                                           IComparer<TKey> comparer)
+        {
+            EnsureArgumentIsNotNull(source, nameof(source));
+            EnsureArgumentIsNotNull(keySelector, nameof(keySelector));
 
-        //}
+            var ordered = new OrderedEnumerable<TSource>(source);
+            return ordered.CreateOrderedEnumerable(keySelector, comparer, true);            
+        }
 
         public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult>(
                                                     this IEnumerable<TSource> source,
@@ -30,8 +33,8 @@ namespace LINQ
             EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
             EnsureArgumentIsNotNull(resultSelector, nameof(resultSelector));
 
+            var dictionary = new Dictionary<TKey, List<TElement>>(comparer);
 
-            var dictionary = new Dictionary<TKey, HashSet<TElement>>(comparer);
 
             foreach (var current in source)
             {
@@ -44,7 +47,7 @@ namespace LINQ
                 }
                 else
                 {
-                    var newList = new HashSet<TElement>() { element };
+                    var newList = new List<TElement>() { element };
                     dictionary.Add(key, newList);
                 }
 
@@ -217,7 +220,7 @@ namespace LINQ
             EnsureArgumentIsNotNull(elementSelector, nameof(source));
 
 
-            Dictionary<TKey, TElement> dictionary = new Dictionary<TKey, TElement>();
+            var dictionary = new Dictionary<TKey, TElement>();
 
             foreach (var current in source)
             {

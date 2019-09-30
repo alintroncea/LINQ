@@ -7,6 +7,22 @@ namespace LINQ
 {
     public class TestLINQFunctions
     {
+
+        [Fact]
+        public void TestOrderBy()
+        {
+            var students = Student.GetSudents();
+
+            Func<Student, int> myFunc = (x) => x.ID;
+            var comparer = new Comparer<int>();
+            var ordered = new OrderedEnumerable<Student>(students);
+
+            var result = LINQFunctions.OrderBy(students, x => myFunc(x), comparer);
+
+            var last = result.Last();
+
+            Assert.Equal(4, last.ID);
+        }
         [Fact]
         public void TestGroupBy()
         {
