@@ -17,6 +17,7 @@ namespace LINQ
         public string Name { get; set; }
         public string Class { get; set; }
 
+
         public static List<Student> GetSudents()
         {
             var list = new List<Student>();

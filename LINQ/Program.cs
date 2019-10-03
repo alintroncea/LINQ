@@ -11,26 +11,34 @@ namespace LINQ
         static void Main(string[] args)
         {
 
-            //string[] strings1 = { "Mara","Ana", "Andreea" };
-            //string[] strings2 = { "Mara", "Ioana", "Mihaela", "Andreea" };
-
-            //int[] numbers1 = { 1, 4, 3, 9, 8 };
-
-            //int[] numbers2 = { 1, 4, 4, 1, 5 };
-
-            var students = Student.GetSudents();
-
-            Func<Student, int> myFunc = (x) => x.ID;
-            var comparer = new Comparer<int>();
-            var ordered = new OrderedEnumerable<Student>(students);
-
-            var result = LINQFunctions.OrderBy(students, x=>myFunc(x), comparer);
+            var students = new List<Student>() {
+            new Student(1, "John", "Computer Science"),
+            new Student(2, "Steve", "Biology"),
+            new Student(3, "Bill", "Math"),
+            new Student(4, "Ram", "Biology"),
+            new Student(5, "Ron", "Math"),
+            new Student(6, "Ram", "Computer Science"),
+        };
+            Func<Student, string> nameSelector = x => x.Name;
+            Func<Student, int> idSelector = x => x.ID;
+            Func<Student, string> classSelector = x => x.Class;
 
 
-            foreach (var current in result)
+            Console.WriteLine("Sorting by name, then by id, then by class");
+
+            //var sorted = students.OrderBy(x => nameSelector(x)).
+            //    ThenBy(y=>idSelector(y)).
+            //    ThenBy(z=>classSelector(z));
+
+            var sorted = LINQFunctions.OrderBy(students, x => nameSelector(x), new KeyComparer<string>()).
+                ThenBy(y => idSelector(y), new KeyComparer<int>()).
+                ThenBy(z => classSelector(z), new KeyComparer<string>());
+
+            foreach (var current in sorted)
             {
-                Console.WriteLine("NAME: " + current.Name + " ID: " + current.ID);
+                Console.WriteLine(current.ID + " : " + current.Name + " : " + current.Class);
             }
+
         }
     }
 }

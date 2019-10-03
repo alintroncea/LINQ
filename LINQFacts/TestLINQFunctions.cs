@@ -11,17 +11,20 @@ namespace LINQ
         [Fact]
         public void TestOrderBy()
         {
-            var students = Student.GetSudents();
+            var students = new List<Student>() {
+            new Student(1, "John", "Computer Science"),
+            new Student(2, "Steve", "Biology"),
+            new Student(3, "Bill", "Math"),
+            new Student(4, "Ram", "Biology"),
+            new Student(5, "Ron", "Math"),
+            new Student(6, "Ram", "Computer Science"),
+            };
 
-            Func<Student, int> myFunc = (x) => x.ID;
-            var comparer = new Comparer<int>();
-            var ordered = new OrderedEnumerable<Student>(students);
+            Func<Student, string> nameSelector = x => x.Name;
 
-            var result = LINQFunctions.OrderBy(students, x => myFunc(x), comparer);
+            var result = students.OrderBy(x => nameSelector(x));
 
-            var last = result.Last();
-
-            Assert.Equal(4, last.ID);
+            Assert.Equal("Steve", result.Last().Name);
         }
         [Fact]
         public void TestGroupBy()

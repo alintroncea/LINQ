@@ -8,16 +8,28 @@ namespace LINQ
 {
     public static class LINQFunctions
     {
-        public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(
-                                                           this IEnumerable<TSource> source,
-                                                           Func<TSource, TKey> keySelector,
-                                                           IComparer<TKey> comparer)
+        public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey>(
+                                                        this IOrderedEnumerable<TSource> source,
+                                                        Func<TSource, TKey> keySelector,
+                                                        IComparer<TKey> comparer)
         {
             EnsureArgumentIsNotNull(source, nameof(source));
             EnsureArgumentIsNotNull(keySelector, nameof(keySelector));
 
-            var ordered = new OrderedEnumerable<TSource>(source);
-            return ordered.CreateOrderedEnumerable(keySelector, comparer, true);            
+
+            return source.CreateOrderedEnumerable(keySelector, comparer, true);
+        }
+        public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(
+                                                           this IEnumerable<TSource> source,
+                                                           Func<TSource, TKey> keySelector,
+                                                           IComparer<TKey> keyComparer)
+        {
+            EnsureArgumentIsNotNull(source, nameof(source));
+            EnsureArgumentIsNotNull(keySelector, nameof(keySelector));
+
+
+            var myComparer = new MyComparer<TSource, TKey>(keySelector, keyComparer);
+            return new MyOrderedEnumerable<TSource>(source, myComparer);
         }
 
         public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult>(
