@@ -29,7 +29,7 @@ namespace LINQ
 
 
             var myComparer = new MyComparer<TSource, TKey>(keySelector, keyComparer);
-            return new MyOrderedEnumerable<TSource>(source, myComparer);
+            return new MyOrderedEnumerable<TSource>(source, myComparer, null);
         }
 
         public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult>(

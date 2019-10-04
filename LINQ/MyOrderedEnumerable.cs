@@ -10,57 +10,52 @@ namespace LINQ
     {
         private List<T> elements;
 
-        public MyOrderedEnumerable(IEnumerable<T> source, IComparer<T> comparer)
+        public MyOrderedEnumerable(IEnumerable<T> source, IComparer<T> firstComparer, IComparer<T> secondComparer)
         {
             elements = new List<T>();
-            Comparer = comparer;
             Source = source;
+            FirstComparer = firstComparer;
+            SecondComparer = secondComparer;
         }
 
         private IEnumerable<T> Source { get; set; }
-        private IComparer<T> Comparer { get; set; }
+        private IComparer<T> FirstComparer { get; set; }
+        private IComparer<T> SecondComparer { get; set; }
 
         public IOrderedEnumerable<T> CreateOrderedEnumerable<TKey>(Func<T, TKey> keySelector, IComparer<TKey> keyComparer, bool descending)
         {
             var secondComparer = new MyComparer<T, TKey>(keySelector, keyComparer);
-            elements = this.ToList();
-            Sort(secondComparer, elements);
-            return new MyOrderedEnumerable<T>(elements, Comparer);
+            return new MyOrderedEnumerable<T>(this, FirstComparer, secondComparer);
 
         }
 
-        public void Sort(IComparer<T> comparer, List<T> elements)
-        {
-            var length = elements.Count();
-
-            bool isSorted = false;
-            while (!isSorted)
-            {
-                isSorted = true;
-                for (int i = 0; i < length - 1; i++)
-                {
-                    for (int j = 0; j < length - i - 1; j++)
-                    {
-                        if (comparer.Compare(elements[j], elements[j + 1]) == 1)
-                        {
-                            var temp = elements[j];
-                            elements[j] = elements[j + 1];
-                            elements[j + 1] = temp;
-                            isSorted = false;
-                        }
-                    }
-
-                }
-            }
-        }
         public IEnumerator<T> GetEnumerator()
         {
             elements = Source.ToList();
-            Sort(Comparer, elements);
 
-            foreach (var current in elements)
+            while (elements.Count > 0)
             {
-                yield return current;
+                var minElement = elements[0];
+                int minIndex = 0;
+                for (int i = 1; i < elements.Count; i++)
+                {
+                    if (FirstComparer.Compare(elements[i], minElement) == 0 && SecondComparer != null)
+                    {
+                        if (SecondComparer.Compare(elements[i], minElement) == -1)
+                        {
+                            minElement = elements[i];
+                            minIndex = i;
+                        }
+
+                    }
+                    if (FirstComparer.Compare(elements[i], minElement) == -1)
+                    {
+                        minElement = elements[i];
+                        minIndex = i;
+                    }
+                }
+                elements.RemoveAt(minIndex);
+                yield return minElement;
             }
 
         }
