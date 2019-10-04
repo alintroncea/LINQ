@@ -39,20 +39,22 @@ namespace LINQ
                 int minIndex = 0;
                 for (int i = 1; i < elements.Count; i++)
                 {
-                    if (FirstComparer.Compare(elements[i], minElement) == 0 && SecondComparer != null)
+                    switch (FirstComparer.Compare(elements[i], minElement))
                     {
-                        if (SecondComparer.Compare(elements[i], minElement) == -1)
-                        {
+                        case -1:
                             minElement = elements[i];
                             minIndex = i;
-                        }
+                            break;
 
+                        case 0:
+                            if (SecondComparer != null && SecondComparer.Compare(elements[i], minElement) == -1)
+                            {
+                                minElement = elements[i];
+                                minIndex = i;
+                            }
+                            break;
                     }
-                    if (FirstComparer.Compare(elements[i], minElement) == -1)
-                    {
-                        minElement = elements[i];
-                        minIndex = i;
-                    }
+                   
                 }
                 elements.RemoveAt(minIndex);
                 yield return minElement;

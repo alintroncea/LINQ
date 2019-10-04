@@ -25,7 +25,7 @@ namespace LINQ
 
             Func<string, int> capitalLength = (x) => x.Length;
             Func<string, string> capital = (x) => x;
-            var result = LINQFunctions.OrderBy(capitals, x => capitalLength(x), new KeyComparer<int>());
+            var result = LINQFunctions.OrderBy(capitals, x => capitalLength(x), new KeyComparer<int>()).ThenBy(y => capital(y), new KeyComparer<string>());
 
             foreach (var current in result)
             {
