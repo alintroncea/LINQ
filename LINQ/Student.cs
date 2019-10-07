@@ -24,9 +24,9 @@ namespace LINQ
             list.Add(new Student(4, "Andrei", "Computer Science"));
             list.Add(new Student(2, "Mihai", "Biology"));
 
-            list.Add(new Student(1, "Maria", "Computer Science"));
-            list.Add(new Student(3, "Ana-Maria", "Biology"));
-            list.Add(new Student(3, "Ioana", "Biology"));
+            list.Add(new Student(1, "Violeta", "Computer Science"));
+            list.Add(new Student(3, "Maria", "Biology"));
+            list.Add(new Student(3, "Ioana", "Marketing"));
             return list;
         }
     }

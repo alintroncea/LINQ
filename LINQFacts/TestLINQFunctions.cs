@@ -8,25 +8,51 @@ namespace LINQ
     public class TestLINQFunctions
     {
         [Fact]
-        public void TestThenBy()
+        public void TestThenByWithTwoCriteria()
         {
             var students = new List<Student>() {
-            new Student(1, "John", "Computer Science"),
-            new Student(2, "Steve", "Biology"),
-            new Student(3, "Bill", "Math"),
+            new Student(5, "John", "Computer Science"),
+            new Student(4, "Steve", "Biology"),
+            new Student(1, "Bill", "Math"),
+            new Student(4, "Ram", "Math"),
+            new Student(3, "Ron", "Math"),
             new Student(4, "Ram", "Biology"),
-            new Student(5, "Ron", "Math"),
-            new Student(6, "Ram", "Computer Science"),
         };
-            Func<Student, string> nameSelector = x => x.Name;
-            Func<Student, int> idSelector = x => x.ID;
-            Func<Student, string> classSelector = x => x.Class;
 
-            var result = LINQFunctions.OrderBy(students, x => nameSelector(x), new KeyComparer<string>()).
-               ThenBy(y => idSelector(y), new KeyComparer<int>()).
-               ThenBy(z => classSelector(z), new KeyComparer<string>());
+            Func<Student, int> idFunc = (x) => x.ID;
+            Func<Student, string> nameFunc = (x) => x.Name;
 
-            Assert.Equal("Steve", result.Last().Name);
+            var result = LINQFunctions.OrderBy(students, x => idFunc(x), new KeyComparer<int>()).
+                ThenBy(y => nameFunc(y), new KeyComparer<string>()).ToList();
+
+            Assert.Equal(1, result[0].ID);
+            Assert.Equal(5, result[5].ID);
+            Assert.Equal("Steve", result[4].Name);
+
+        }
+
+        [Fact]
+        public void TestThenByWithOneCriterion()
+        {
+            var students = new List<Student>() {
+            new Student(5, "John", "Computer Science"),
+            new Student(4, "Steve", "Biology"),
+            new Student(1, "Bill", "Math"),
+            new Student(4, "Ram", "Math"),
+            new Student(3, "Ron", "Math"),
+            new Student(4, "Ram", "Biology"),
+        };
+
+            Func<Student, int> idFunc = (x) => x.ID;
+            Func<Student, string> nameFunc = (x) => x.Name;
+
+            var result = LINQFunctions.OrderBy(students, x => idFunc(x), new KeyComparer<int>()).
+                ThenBy(y => nameFunc(y), new KeyComparer<string>()).ToList();
+
+            Assert.Equal(1, result[0].ID);
+            Assert.Equal(5, result[5].ID);
+            Assert.Equal("Steve", result[4].Name);
+
         }
         [Fact]
         public void TestOrderBy()
