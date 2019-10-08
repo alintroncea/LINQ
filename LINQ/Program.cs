@@ -28,8 +28,8 @@ namespace LINQ
             //var result = students.OrderBy(x=>idFunc(x)).ThenBy(y=>nameFunc(y));
 
             var result = LINQFunctions.OrderBy(students, x => idFunc(x), new KeyComparer<int>())
-            .ThenBy(y => nameFunc(y), new KeyComparer<string>())
-            .ThenBy(z => classFunc(z), new KeyComparer<string>());
+           .ThenBy(y => nameFunc(y), new KeyComparer<string>())
+           .ThenBy(z => classFunc(z), new KeyComparer<string>());
 
             foreach (var current in result)
             {
